@@ -316,6 +316,7 @@ namespace AgOpenGPS
                     double dist = 0;
                     int p;
                     ptCount = stripList[s].Count;
+                    if (ptCount == 0) continue;
                     for (p = 0; p < ptCount; p += 6)
                     {
                         dist = ((pivot.easting - stripList[s][p].easting) * (pivot.easting - stripList[s][p].easting))
@@ -342,7 +343,7 @@ namespace AgOpenGPS
                 for (int p = 0; p < stripList[stripCount].Count - backSpacing; p += 4)
                 {
                     double dist = ((pivot.easting - stripList[stripCount][p].easting) * (pivot.easting - stripList[stripCount][p].easting))
-                        + ((pivot.northing - stripList[stripCount][p].northing) * (pivot.northing - stripList[stripCount][p].northing));
+                        + ((pivot.northing - stripList[stripCount][p].northing) * (pivot.northing - stripList[stripCount][p].northing));                    
                     if (dist < minDistA)
                     {
                         minDistA = dist;
@@ -397,7 +398,7 @@ namespace AgOpenGPS
                 start = lastLockPt - 10; if (start < 0) start = 0;
                 stop = lastLockPt + 10; if (stop > ptCount) stop = ptCount;
 
-                if (ptCount < 2)
+                if (ptCount < 2 )
                 {
                     ctList.Clear();
                     isLocked = false;
@@ -464,7 +465,7 @@ namespace AgOpenGPS
             //are we going same direction as stripList was created?
             bool isSameWay = Math.PI - Math.Abs(Math.Abs(mf.fixHeading - stripList[stripNum][pt].heading) - Math.PI) < 1.57;
 
-            double RefDist = (distanceFromRefLine + (isSameWay ? mf.tool.toolOffset : -mf.tool.toolOffset))
+            double RefDist = (distanceFromRefLine + (isSameWay ? mf.tool.toolOffset : -mf.tool.toolOffset)) 
                                 / (mf.tool.toolWidth - mf.tool.toolOverlap);
 
             double howManyPathsAway;
@@ -495,7 +496,7 @@ namespace AgOpenGPS
                 ctList.Clear();
 
                 //don't guide behind yourself
-                if (stripNum == stripList.Count - 1 && howManyPathsAway == 0) return;
+                if (stripNum == stripList.Count-1 && howManyPathsAway == 0) return;
 
                 //make the new guidance line list called guideList
                 ptCount = stripList[stripNum].Count;
@@ -679,7 +680,7 @@ namespace AgOpenGPS
                     //just need to make sure the points continue ascending in list order or heading switches all over the place
                     if (A > B) { C = A; A = B; B = C; }
 
-                    if (isLocked && (A < 2 || B > ptCount - 3))
+                    if (isLocked &&  (A < 2 || B > ptCount - 3))
                     {
                         //ctList.Clear();
                         isLocked = false;
@@ -870,14 +871,15 @@ namespace AgOpenGPS
 
                 //build tale
                 double head = ptList[0].heading;
-                int length = (int)mf.tool.toolWidth + 3;
+                int length = (int)mf.tool.toolWidth+3;
                 vec3 pnt;
                 int ptc = ctList.Count - 1;
-                for (int a = 0; a < length; a++)
+                for (int a = 0; a < length; a ++)
                 {
                     pnt.easting = ptList[0].easting - (Math.Sin(head));
                     pnt.northing = ptList[0].northing - (Math.Cos(head));
                     pnt.heading = ptList[0].heading;
+                    pnt.now = DateTime.Now;
                     ptList.Insert(0, pnt);
                 }
 
@@ -889,6 +891,7 @@ namespace AgOpenGPS
                     pnt.easting = ptList[ptc].easting + (Math.Sin(head) * i);
                     pnt.northing = ptList[ptc].northing + (Math.Cos(head) * i);
                     pnt.heading = head;
+                    pnt.now = DateTime.Now;
                     ptList.Add(pnt);
                 }
 

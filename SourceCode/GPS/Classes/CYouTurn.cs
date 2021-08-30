@@ -239,6 +239,7 @@ namespace AgOpenGPS
                 pt.easting = ytList[0].easting + (Math.Sin(head) * 0.2);
                 pt.northing = ytList[0].northing + (Math.Cos(head) * 0.2);
                 pt.heading = ytList[0].heading;
+                pt.now = DateTime.Now;
                 ytList.Insert(0, pt);
             }
 
@@ -249,6 +250,7 @@ namespace AgOpenGPS
                 pt.easting = ytList[count - 1].easting + (Math.Sin(head) * i * 0.2);
                 pt.northing = ytList[count - 1].northing + (Math.Cos(head) * i * 0.2);
                 pt.heading = head;
+                pt.now = DateTime.Now;
                 ytList.Add(pt);
             }
 
@@ -1057,7 +1059,7 @@ namespace AgOpenGPS
                 head = mf.ABLine.abHeading;
                 mf.ABLine.isLateralTriggered = true;
             }
-            else
+            else if (mf.curve.isCurveSet)
             {
                 rEastYT = mf.curve.rEastCu;
                 rNorthYT = mf.curve.rNorthCu;
@@ -1065,6 +1067,8 @@ namespace AgOpenGPS
                 head = mf.curve.manualUturnHeading;
                 mf.curve.isLateralTriggered = true;
             }
+
+            else return;
 
             //grab the vehicle widths and offsets
             double turnOffset = (mf.tool.toolWidth - mf.tool.toolOverlap); //remove rowSkips
@@ -1106,7 +1110,7 @@ namespace AgOpenGPS
                 head = mf.ABLine.abHeading;
                 mf.ABLine.isLateralTriggered = true;
             }
-            else
+            else if (mf.curve.isCurveSet)
             {
                 rEastYT = mf.curve.rEastCu;
                 rNorthYT = mf.curve.rNorthCu;
@@ -1114,6 +1118,8 @@ namespace AgOpenGPS
                 head = mf.curve.manualUturnHeading;
                 mf.curve.isLateralTriggered = true;
             }
+
+            else return;
 
             //grab the vehicle widths and offsets
             double turnOffset = (mf.tool.toolWidth - mf.tool.toolOverlap) * rowSkipsWidth + (isTurnRight ? mf.tool.toolOffset * 2.0 : -mf.tool.toolOffset * 2.0);
